@@ -8,8 +8,11 @@
 
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link rel="stylesheet" type="text/css" href="style/sliders.css">
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+        <script type="text/javascript" src="javascript/sliders.js"></script>
     </head>
-    
+
     <body>
         <section class="container">
             <h1>Anarchie relationnelle</h1>
@@ -18,10 +21,10 @@
 
             <div class="row">
                 <div class="col-6 input-group">
-                    <input type="text" class="form-control" placeholder="Ton nom" aria-label="Ton nom"/>
+                    <input type="text" id="you" class="form-control" placeholder="Ton nom" aria-label="Ton nom"/>
                 </div>
                 <div class="col-6 input-group">
-                    <input type="text" class="form-control" placeholder="Ta relation" aria-label="Ta relation"/>
+                    <input type="text" id="other" class="form-control" placeholder="Ta relation" aria-label="Ta relation"/>
                 </div>
             </div>
 
@@ -116,6 +119,25 @@
                     <input type="range" min="1" max="100" value="50" class="slider" id="queerness">
                 </div>
             </div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="col-3 input-group">
+                    <label for="link">Lien</label>
+                </div>
+                <div class="col-9 input-group">
+                    <input type="text" id="link" class="form-control" disabled="disabled" value="" />
+                </div>
+            </div>
+
         </section>
+
+        <script type="text/javascript">
+            $(document).ready(loadState);
+            $('.slider').change(updateSliders);
+            $('#you').change(updateSliders);
+            $('#other').change(updateSliders);
+        </script>
     </body>
 </html>

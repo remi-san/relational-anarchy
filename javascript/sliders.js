@@ -1,5 +1,5 @@
 const getUrlParameters = function (sParam) {
-    var sPageURL = window.location.href.split('#')[1];
+    var sPageURL = decodeURIComponent(window.location.href.split('#')[1]);
 
     if (sPageURL === undefined) {
         return null;

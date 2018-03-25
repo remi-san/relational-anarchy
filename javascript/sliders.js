@@ -83,9 +83,11 @@ const addSlider = function (id, name, value, color) {
     };
 
     $("#sliders").append(
-        '<div class="slidecontainer row">' +
+        '<div class="slidecontainer row" id="block-'+id+'">' +
             '<div class="col-3">' +
                 '<label for="'+id+'">'+name+'</label>' +
+                '&nbsp' +
+                '<input type="button" class="remove-slider btn-outline-info" id="remove-slider-'+id+'" value="-" />' +
             '</div>' +
             '<div class="col-9">' +
                 '<input type="range" min="1" max="100" value="'+value+'" class="slider" id="'+id+'" style="background-color: #'+color+';" />' +
@@ -94,6 +96,9 @@ const addSlider = function (id, name, value, color) {
     );
 
     $("#"+id).change(updateSliders);
+    $("#remove-slider-"+id).click(function() {
+        removeSlider(id);
+    });
 };
 
 const loadState = function() {
@@ -124,7 +129,7 @@ const loadState = function() {
     }
 
     displaySliders();
-}
+};
 
 const displaySliders = function() {
     for(var id in sliders) {
@@ -137,7 +142,7 @@ const displaySliders = function() {
     }
 
     updateSliders();
-}
+};
 
 const newSlider = function () {
     var name = $("#new-slider-name").val();
@@ -147,7 +152,17 @@ const newSlider = function () {
     updateSliders();
 
     $("#new-slider-name").val("");
-}
+};
+
+const removeSlider = function (id) {
+    var confirmation = confirm("Es-tu sûr•e de vouloir supprimer ce critère ?");
+
+    if (confirmation === true) {
+        $("#block-" + id).remove();
+        delete sliders[id];
+        updateSliders();
+    }
+};
 
 const updateSliders = function() {
     $('.slider').each(function () {
@@ -162,4 +177,4 @@ const updateSliders = function() {
 
     window.location.href = 'index.html#' + state.join('&');
     $('#link').val(window.location.href);
-}
+};

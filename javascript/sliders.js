@@ -172,7 +172,7 @@ const updateSliders = function() {
     var state = [
         "you=" + $("#you").val(),
         "other=" + $("#other").val(),
-        "sliders=" + JSON.stringify(sliders)
+        "sliders=" + encodeURIComponent(JSON.stringify(sliders))
     ];
 
     window.location.href = 'index.html#' + state.join('&');

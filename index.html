@@ -36,6 +36,17 @@
 
             <div class="row">
                 <div class="col-3 input-group">
+                    <input type="text" id="new-slider-name" class="form-control" value="" placeholder="Nouveau curseur" aria-label="Nouveau curseur"/>
+                </div>
+                <div class="col-9 input-group">
+                    <input type="button" id="new-slider-add" value="+" style="width: 100%" />
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="row">
+                <div class="col-3 input-group">
                     <label for="link">Lien</label>
                 </div>
                 <div class="col-9 input-group">
@@ -55,6 +66,7 @@
             $(document).ready(loadState);
             $('#you').change(updateSliders);
             $('#other').change(updateSliders);
+            $('#new-slider-add').click(newSlider);
         </script>
     </body>
 </html>

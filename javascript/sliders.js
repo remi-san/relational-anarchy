@@ -38,6 +38,24 @@ const getUrlParameters = function (sParam) {
     return parameters;
 };
 
+const slugify = function (str) {
+    str = str.replace(/^\s+|\s+$/g, ''); // trim
+    str = str.toLowerCase();
+  
+    // remove accents, swap ñ for n, etc
+    var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+    var to   = "aaaaeeeeiiiioooouuuunc------";
+    for (var i=0, l=from.length ; i<l ; i++) {
+        str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+    }
+
+    str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+        .replace(/\s+/g, '-') // collapse whitespace and replace by -
+        .replace(/-+/g, '-'); // collapse dashes
+
+    return str;
+};
+
 const getRandomColor = function () {
     var letters = '0123456789ABCDEF';
     var color = '';
@@ -45,7 +63,7 @@ const getRandomColor = function () {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
-}
+};
 
 const addSlider = function (id, name, value, color) {
 
@@ -56,6 +74,13 @@ const addSlider = function (id, name, value, color) {
     if (color === undefined) {
         color = getRandomColor();
     }
+
+    sliders[id] = {
+        "id": id,
+        "name": name,
+        "value": value,
+        "color": color
+    };
 
     $("#sliders").append(
         '<div class="slidecontainer row">' +
@@ -112,6 +137,16 @@ const displaySliders = function() {
     }
 
     updateSliders();
+}
+
+const newSlider = function () {
+    var name = $("#new-slider-name").val();
+    var id = slugify(name);
+
+    addSlider(id, name);
+    updateSliders();
+
+    $("#new-slider-name").val("");
 }
 
 const updateSliders = function() {

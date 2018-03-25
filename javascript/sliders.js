@@ -178,3 +178,9 @@ const updateSliders = function() {
     window.location.href = 'index.html#' + state.join('&');
     $('#link').val(window.location.href);
 };
+
+const copyLink = function() {
+    var copyText = document.getElementById("link");
+    copyText.select();
+    document.execCommand("Copy");
+};

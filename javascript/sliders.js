@@ -1,14 +1,14 @@
 const defaultSliders = {
-    "complicite": { "name": "Complicité", "value": 50, "color": "66ffc2" },
-    "conjugalite": { "name": "Conjugalité", "value": 50, "color": "d3d3d3" },
-    "fun": { "name": "Fun", "value": 50, "color": "ffff66" },
-    "intimite": { "name": "Intimité", "value": 50, "color": "ccffff" },
-    "physique": { "name": "Proximité physique", "value": 50, "color": "ffd699" },
-    "sensualite": { "name": "Sensualité", "value": 50, "color": "bb99ff" },
-    "sex": { "name": "Sexualité", "value": 50, "color": "ffb3d9" },
-    "intel": { "name": "Stimulation intellectuelle", "value": 50, "color": "ff6666" },
-    "hetero": { "name": "Heteronormativité", "value": 50, "color": "4d4dff" },
-    "queerness": { "name": "Queerness", "value": 50, "color": "ffe6ff" },
+    "complicite": { "name": "Complicité", "value": 50, "expectedValue": 50, "color": "66ffc2" },
+    "conjugalite": { "name": "Conjugalité", "value": 50, "expectedValue": 50, "color": "d3d3d3" },
+    "fun": { "name": "Fun", "value": 50, "expectedValue": 50, "color": "ffff66" },
+    "intimite": { "name": "Intimité", "value": 50, "expectedValue": 50, "color": "ccffff" },
+    "physique": { "name": "Proximité physique", "value": 50, "expectedValue": 50, "color": "ffd699" },
+    "sensualite": { "name": "Sensualité", "value": 50, "expectedValue": 50, "color": "bb99ff" },
+    "sex": { "name": "Sexualité", "value": 50, "expectedValue": 50, "color": "ffb3d9" },
+    "intel": { "name": "Stimulation intellectuelle", "value": 50, "expectedValue": 50, "color": "ff6666" },
+    "hetero": { "name": "Heteronormativité", "value": 50, "expectedValue": 50, "color": "4d4dff" },
+    "queerness": { "name": "Queerness", "value": 50, "expectedValue": 50, "color": "ffe6ff" },
 };
 
 const tooltips = {
@@ -18,8 +18,8 @@ const tooltips = {
     "intimite": "On aborde ensemble des sujets intimes, on parle de soi",
     "physique": "On se tient la main, on se fait des câlins, on peut dormir ensemble",
     "sensualite": "On s’embrasse, on se câline, on peut être nu.e.s ensemble, j’ai envie de te toucher",
-    "sex": "On se rend curieux, on crée ensemble, on discute, on se nourrit",
-    "intel": "On a des rapports sexuels",
+    "sex": "On a des rapports sexuels",
+    "intel": "On se rend curieux, on crée ensemble, on discute, on se nourrit",
     "hetero": "Notre relation correspond au stéréotype de la relation homme/femme monogame",
     "queerness": "Notre relation remet en question, subvertit les normes sexuelles, genrées...",
 };
@@ -78,10 +78,14 @@ const getRandomColor = function () {
     return color;
 };
 
-const addSlider = function (id, name, value, color) {
+const addSlider = function (id, name, value, expectedValue, color) {
 
     if (value === undefined) {
         value = 50;
+    }
+
+    if (expectedValue === undefined) {
+        expectedValue = value;
     }
 
     if (color === undefined) {
@@ -91,6 +95,7 @@ const addSlider = function (id, name, value, color) {
     sliders[id] = {
         "name": name,
         "value": value,
+        "expectedValue": expectedValue,
         "color": color
     };
 
@@ -104,12 +109,21 @@ const addSlider = function (id, name, value, color) {
                 '<input type="button" class="remove-slider btn-outline-info" id="remove-slider-'+id+'" value="-" />' +
             '</div>' +
             '<div class="col-9">' +
-                '<input type="range" min="1" max="100" value="'+value+'" class="slider" id="'+id+'" style="background-color: #'+color+';" />' +
+                '<div class="row">' +
+                    '<div class="col-2">Actuel :</div>' +
+                    '<div class="col-10"><input type="range" min="1" max="100" value="'+value+'" class="slider actual" id="'+id+'" style="background-color: #'+color+';" /></div>' +
+                '</div>' +
+                '<div class="row">' +
+                    '<div class="col-2">Souhaité :</div>' +
+                    '<div class="col-10"><input type="range" min="1" max="100" value="'+expectedValue+'" class="slider expected" id="expected-'+id+'" ref="'+id+'" style="background-color: #'+color+';" /></div>' +
+                '</div>' +
             '</div>' +
-        '</div>'
+        '</div>' +
+        '<hr/>'
     );
 
     $("#"+id).change(updateSliders);
+    $("#expected-"+id).change(updateSliders);
     $("#remove-slider-"+id).click(function() {
         removeSlider(id);
     });
@@ -130,6 +144,7 @@ const loadState = function() {
                     sliders[id] = {
                         "name": defaultSliders[id]["name"],
                         "value": parameters[id],
+                        "expectedValue": parameters[id],
                         "color": defaultSliders[id]["color"]
                     }
                 }
@@ -152,6 +167,7 @@ const displaySliders = function() {
             id,
             sliders[id]["name"],
             sliders[id]["value"],
+            ("expectedValue" in sliders[id]) ? sliders[id]["expectedValue"] : sliders[id]["value"],
             sliders[id]["color"]
         );
     }
@@ -181,8 +197,12 @@ const removeSlider = function (id) {
 };
 
 const updateSliders = function() {
-    $('.slider').each(function () {
+    $('.actual').each(function () {
         sliders[$(this).attr('id')]["value"] = $(this).val();
+    });
+
+    $('.expected').each(function () {
+        sliders[$(this).attr('ref')]["expectedValue"] = $(this).val();
     });
 
     var state = [

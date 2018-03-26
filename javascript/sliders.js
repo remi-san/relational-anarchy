@@ -1,19 +1,32 @@
 const defaultSliders = {
-    "complicite": { "name": "Complicité", "id": "complicite", "value": 50, "color": "66ffc2" },
-    "conjugalite": { "name": "Conjugalité", "id": "conjugalite", "value": 50, "color": "d3d3d3" },
-    "fun": { "name": "Fun", "id": "fun", "value": 50, "color": "ffff66" },
-    "intimite": { "name": "Intimité", "id": "intimite", "value": 50, "color": "ccffff" },
-    "physique": { "name": "Proximité physique", "id": "physique", "value": 50, "color": "ffd699" },
-    "sensualite": { "name": "Sensualité", "id": "sensualite", "value": 50, "color": "bb99ff" },
-    "sex": { "name": "Sexualité", "id": "sex", "value": 50, "color": "ffb3d9" },
-    "intel": { "name": "Stimulation intellectuelle", "id": "intel", "value": 50, "color": "ff6666" },
-    "hetero": { "name": "Heteronormativité", "id": "hetero", "value": 50, "color": "4d4dff" },
-    "queerness": { "name": "Queerness", "id": "queerness", "value": 50, "color": "ffe6ff" },
+    "complicite": { "name": "Complicité", "value": 50, "color": "66ffc2" },
+    "conjugalite": { "name": "Conjugalité", "value": 50, "color": "d3d3d3" },
+    "fun": { "name": "Fun", "value": 50, "color": "ffff66" },
+    "intimite": { "name": "Intimité", "value": 50, "color": "ccffff" },
+    "physique": { "name": "Proximité physique", "value": 50, "color": "ffd699" },
+    "sensualite": { "name": "Sensualité", "value": 50, "color": "bb99ff" },
+    "sex": { "name": "Sexualité", "value": 50, "color": "ffb3d9" },
+    "intel": { "name": "Stimulation intellectuelle", "value": 50, "color": "ff6666" },
+    "hetero": { "name": "Heteronormativité", "value": 50, "color": "4d4dff" },
+    "queerness": { "name": "Queerness", "value": 50, "color": "ffe6ff" },
+};
+
+const tooltips = {
+    "complicite": "On partage des références, on a des private jokes, \"on se connaît par coeur\"",
+    "conjugalite": "On vit ensemble, on se voit souvent, on partage des cercles communs",
+    "fun": "On s’amuse, joue, rigole ensemble",
+    "intimite": "On aborde ensemble des sujets intimes, on parle de soi",
+    "physique": "On se tient la main, on se fait des câlins, on peut dormir ensemble",
+    "sensualite": "On s’embrasse, on se câline, on peut être nu.e.s ensemble, j’ai envie de te toucher",
+    "sex": "On se rend curieux, on crée ensemble, on discute, on se nourrit",
+    "intel": "On a des rapports sexuels",
+    "hetero": "Notre relation correspond au stéréotype de la relation homme/femme monogame",
+    "queerness": "Notre relation remet en question, subvertit les normes sexuelles, genrées...",
 };
 
 var sliders = {};
 
-const getUrlParameters = function (sParam) {
+const getUrlParameters = function () {
     var sPageURL = window.location.href.split('#')[1];
 
     if (sPageURL === undefined) {
@@ -21,7 +34,7 @@ const getUrlParameters = function (sParam) {
     }
 
     var sURLVariables = decodeURIComponent(sPageURL).split('&'),
-        sParameterName,
+        sParameter,
         i,
         name,
         value,
@@ -76,16 +89,17 @@ const addSlider = function (id, name, value, color) {
     }
 
     sliders[id] = {
-        "id": id,
         "name": name,
         "value": value,
         "color": color
     };
 
+    var tooltip = (id in tooltips) ? ' data-toggle="tooltip" title="' + tooltips[id] + '"':'';
+
     $("#sliders").append(
         '<div class="slidecontainer row" id="block-'+id+'">' +
             '<div class="col-3">' +
-                '<label for="'+id+'">'+name+'</label>' +
+                '<label for="'+id+'"'+ tooltip + '>'+name+'</label>' +
                 '&nbsp' +
                 '<input type="button" class="remove-slider btn-outline-info" id="remove-slider-'+id+'" value="-" />' +
             '</div>' +
@@ -102,19 +116,18 @@ const addSlider = function (id, name, value, color) {
 };
 
 const loadState = function() {
-    parameters = getUrlParameters();
+    var parameters = getUrlParameters();
 
     if (parameters !== null) {
         $('#you').val(parameters["you"]);
         $('#other').val(parameters["other"]);
 
-        slidersConfig = parameters["sliders"];
+        var slidersConfig = parameters["sliders"];
 
         if (slidersConfig === undefined) {
             for (var id in parameters) {
                 if (defaultSliders[id] !== undefined) {
                     sliders[id] = {
-                        "id": defaultSliders[id]["id"],
                         "name": defaultSliders[id]["name"],
                         "value": parameters[id],
                         "color": defaultSliders[id]["color"]
@@ -129,12 +142,14 @@ const loadState = function() {
     }
 
     displaySliders();
+
+    $('[data-toggle="tooltip"]').tooltip();
 };
 
 const displaySliders = function() {
     for(var id in sliders) {
         addSlider(
-            sliders[id]["id"],
+            id,
             sliders[id]["name"],
             sliders[id]["value"],
             sliders[id]["color"]
@@ -145,13 +160,14 @@ const displaySliders = function() {
 };
 
 const newSlider = function () {
-    var name = $("#new-slider-name").val();
+    var slider = $("#new-slider-name");
+    var name = slider.val();
     var id = slugify(name);
 
     addSlider(id, name);
     updateSliders();
 
-    $("#new-slider-name").val("");
+    slider.val("");
 };
 
 const removeSlider = function (id) {
